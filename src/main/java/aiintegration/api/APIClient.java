@@ -1,18 +1,9 @@
 package aiintegration.api;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
+import javax.json.*;
+import java.io.*;
+import java.net.*;
+
 
 /**
  * Base Class for connecting to OpenAI and retrieving the proccessed data
@@ -31,42 +22,70 @@ public class APIClient {
         }
     }
 
-    private JsonArray requestBodyBuilder() {
-        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-        JsonObject body = Json.createObjectBuilder()
-                .add("model","gpt-3.5-turbo-1106")
-                .add("prompt", "Say test")
-                .build();
+    private void requestBodyBuilder() {
 
-        System.out.println(body.toString());
-        jsonArrayBuilder.add(body);
-        return jsonArrayBuilder.build();
+        final String model = "gpt-3.5-turbo";
+        final String prompt = "say test";
+
+        JsonArrayBuilder    messageBuilder = Json.createArrayBuilder();
+        JsonObjectBuilder   bodyBuilder = Json.createObjectBuilder();
+
+        JsonObject userMessage = Json.createObjectBuilder()
+                .add("role","user")
+                .add("content", prompt)
+                .build();
+        messageBuilder.add(userMessage);
+
+        bodyBuilder.add("model", model)
+                .add("messages", messageBuilder.build());
+
+        System.out.print("Mybody ->");
+        System.out.println(bodyBuilder.build().toString());
+//        return jsonArrayBuilder.build();
 
 
     }
 
     public void makeApiRequest() {
 
-        HttpClient httpClient = HttpClients.createDefault();
+        String url = "https://api.openai.com/v1/chat/completions";
+        String apiKey = "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";
+        String model = "gpt-3.5-turbo";
 
-        HttpPost httpPost = new HttpPost(this.endpoint);
-
-        httpPost.addHeader("Authorization", "Bearer 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");
-        StringEntity requestEntity = null;
         try {
-            requestEntity = new StringEntity(this.requestBodyBuilder().toString());
-        } catch (UnsupportedEncodingException e) {
+            URL obj = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            // The request body
+            this.requestBodyBuilder();
+            String body = "{\"model\": \"" + model + "\", \"messages\": [{\"role\": \"user\", \"content\": \"" + "say test" + "\"}]}";
+
+            System.out.println("Body->" + body);
+            connection.setDoOutput(true);
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(body);
+            writer.flush();
+            writer.close();
+
+            // Response from ChatGPT
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+
+            StringBuffer response = new StringBuffer();
+
+            while ((line = br.readLine()) != null) {
+                response.append(line);
+            }
+            br.close();
+
+            // calls the method to extract the message.
+            System.out.println(response);
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-        httpPost.setEntity(requestEntity);
-
-        try {
-            HttpResponse httpResponse = httpClient.execute(httpPost);
-            System.out.println("****Response****");
-            System.out.println(httpResponse.toString());
-        } catch (Exception e) {
-            System.out.println("error in http client execute");
-            e.printStackTrace();
         }
     }
 
