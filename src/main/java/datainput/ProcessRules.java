@@ -1,4 +1,4 @@
-package input;
+package datainput;
 /**
  * Storage class for the rules that will take into account later into proccessing data.
  *
