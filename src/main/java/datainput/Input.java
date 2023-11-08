@@ -2,6 +2,7 @@ package datainput;
 
 import javax.json.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Input abstract class for handling how data enters the workflow
@@ -10,12 +11,14 @@ import java.io.IOException;
  * @author Benat Castro
  */
 public abstract class Input {
+
     protected final ProcessRules rules;
 
     protected final JsonArrayBuilder jsonArrayBuilder;
-
+    private int entry_id;
 
     protected Input(ProcessRules rules) {
+        this.entry_id = 0;
         this.rules = rules;
         this.jsonArrayBuilder = Json.createArrayBuilder();
     }
@@ -25,15 +28,38 @@ public abstract class Input {
         return this.jsonArrayBuilder.build();
    }
 
+    abstract protected String[] extractKeys();
+    abstract protected String[] extractValues();
     /**
-     * Reads data from the input and returns a Json object with only one entry
+     * Gets data from the concrete class, applies rules and creates the entry with Json format
      * -> "age":"19","sex":"female","bmi":"27.9"...
      */
-    abstract protected JsonObject generateEntry() throws IOException;
+
+    protected JsonObject generateEntry() {
+
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+
+        final String[] keys = this.extractKeys();
+        final String[] values = this.extractValues();
+        final ArrayList<String> ignoredKeys = this.rules.getIgnoredKeys();
+
+        jsonObjectBuilder.add("id", this.entry_id++);
+
+        for (int i = 0; i < values.length; i++) {
+
+            // Ignore adding the key to json if it is found on the processing rules
+            if(ignoredKeys.contains(keys[i]))
+                continue;
+
+            jsonObjectBuilder.add(keys[i], values[i]);
+        }
+        return jsonObjectBuilder.build();
+    };
 
     public void processData() throws IOException {
-        for (int i = 0; i < this.rules.batch_size; i++) {
-            this.jsonArrayBuilder.add(this.generateEntry());
+        for (int i = 0; i < this.rules.getBatchSize(); i++) {
+            JsonObject jsonEntry = this.generateEntry();
+            this.jsonArrayBuilder.add(jsonEntry);
         }
     }
 
