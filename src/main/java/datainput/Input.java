@@ -12,11 +12,19 @@ import java.util.ArrayList;
  */
 public abstract class Input {
 
+    // Rules used to handle how the input is saved
     protected final ProcessRules rules;
 
+    // This class will create the final JSON formatted data
     protected final JsonArrayBuilder jsonArrayBuilder;
+
+    // Unique identifier for every data entry we handle
     private int entry_id;
 
+    /**
+     * Constructor for Input class
+     * @param rules needed for construction so the user defines the handling details
+     */
     protected Input(ProcessRules rules) {
         this.entry_id = 0;
         this.rules = rules;
@@ -24,10 +32,23 @@ public abstract class Input {
     }
 
     // Method were the input data is processed into a Json data structure that the AI is capable of understanding
+
+    /**
+     * Getter for the data as Json
+     * @return Array of JSONs
+     */
    public JsonArray getDataAsJson() {
         return this.jsonArrayBuilder.build();
    }
 
+    /**
+     * Returns the the keys for each value found in the document
+     * Since this class doesn't handle specific type of formats, like CSV, XML...
+     * and every format have their own way to store the keys the responsability
+     * lies in the specific format handler
+     * @return array of Strings with all the keys
+     * @todo refactor to PairList
+     */
     abstract protected String[] extractKeys();
     abstract protected String[] extractValues();
     /**
