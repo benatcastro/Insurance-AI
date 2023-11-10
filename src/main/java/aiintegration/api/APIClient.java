@@ -11,6 +11,8 @@ import org.apache.http.util.EntityUtils;
 import javax.json.*;
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 /**
@@ -19,13 +21,23 @@ import java.net.*;
 public class APIClient {
     private final JsonArray data;
     private final URI endpoint;
+    private final String prompt;
 
     public APIClient(JsonArray data) {
+
+        Path promptFilePath = Path.of("src/main/resources/prompt.txt");
+
         this.data = data;
         try {
             this.endpoint = new URI("https://api.openai.com/v1/chat/completions");
         } catch (URISyntaxException e) {
             System.out.println("The URL for API client is not valid");
+            throw new RuntimeException(e);
+        }
+
+        try {
+            this.prompt = Files.readString(promptFilePath);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -35,12 +47,14 @@ public class APIClient {
         final String model = "gpt-3.5-turbo-1106";
         final String prompt = "say test";
 
+        System.out.println(this.prompt);
+
         JsonArrayBuilder    messageBuilder = Json.createArrayBuilder();
         JsonObjectBuilder   bodyBuilder = Json.createObjectBuilder();
 
         JsonObject systemMessage = Json.createObjectBuilder()
                 .add("role", "system")
-                .add("content", "you are an insurance expert with the task to analyze this data and provide a comprehensive risk evaluation on a scale of 0 to 100. The output should include a detailed JSON report outlining the factors contributing to the risk score, offering a clear and concise summary of the identified risks")
+                .add("content", this.prompt)
                 .build();
 
         JsonObject userMessage = Json.createObjectBuilder()
@@ -64,13 +78,12 @@ public class APIClient {
 
     }
 
-    public void makeApiRequest() throws IOException {
+    public HttpResponse makeApiRequest() throws IOException {
 
-        String url = "https://api.openai.com/v1/chat/completions";
         String apiKey = "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";
 
         HttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(url);
+        HttpPost httpPost = new HttpPost(this.endpoint);
 
         // Adding neccesary http headers for the request
         httpPost.setHeader("Authorization", "Bearer " + apiKey);
@@ -92,7 +105,10 @@ public class APIClient {
         try {
             HttpResponse response = client.execute(httpPost);
             String responseBody = EntityUtils.toString(response.getEntity());
+
+            responseBody.replaceAll("\n", " ");
             System.out.println("Response body- " + responseBody);
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

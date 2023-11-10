@@ -4,6 +4,8 @@ import aiintegration.api.APIClient;
 import datainput.Input;
 import datainput.file.csv.CSVInputHandler;
 import datainput.ProcessRules;
+import org.apache.http.HttpResponse;
+
 import javax.json.JsonArray;
 import java.io.IOException;
 
@@ -21,7 +23,11 @@ public class Main {
             System.out.println(data.toString());
 
             APIClient apiClient = new APIClient(data);
-            apiClient.makeApiRequest();
+           HttpResponse apiResponse =  apiClient.makeApiRequest();
+
+
+
+
         } catch (IOException e) {
             System.out.println("cannot open file");
         }
