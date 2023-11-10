@@ -78,7 +78,7 @@ public class APIClient {
 
     }
 
-    public HttpResponse makeApiRequest() throws IOException {
+    public String makeApiRequest() throws IOException {
 
         String apiKey = "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";
 
@@ -93,7 +93,7 @@ public class APIClient {
         // Adding the prompt information to the request as the body
         StringEntity body_entity;
         String body_data = this.requestBodyBuilder();
-        System.out.println("Body->" + body_data);
+//        System.out.println("Body->" + body_data);
         try {
             body_entity = new StringEntity(body_data);
         } catch (UnsupportedEncodingException e) {
@@ -107,8 +107,8 @@ public class APIClient {
             String responseBody = EntityUtils.toString(response.getEntity());
 
             responseBody.replaceAll("\n", " ");
-            System.out.println("Response body- " + responseBody);
-            return response;
+//            System.out.println("Response body- " + responseBody);
+            return responseBody;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
