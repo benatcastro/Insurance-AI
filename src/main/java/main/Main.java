@@ -4,16 +4,8 @@ import aiintegration.api.APIClient;
 import datainput.Input;
 import datainput.file.csv.CSVInputHandler;
 import datainput.ProcessRules;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
-
-import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import java.io.IOException;
-import java.io.StringReader;
-
 import static spark.Spark.*;
 
 
@@ -33,13 +25,6 @@ public class Main {
 
             APIClient apiClient = new APIClient(data);
             String apiResponse =  apiClient.makeApiRequest();
-//            System.out.println("Returning ->" + apiResponse);
-//            JsonObject filtered = Json.createReader(new StringReader(apiResponse)).readObject();
-//            String test = filtered.get("choices").toString();
-//
-//            System.out.println(test);
-//
-//            System.out.println(filtered.toString());
             return apiResponse;
 
         } catch (IOException e) {
@@ -50,7 +35,9 @@ public class Main {
     public static void main(String[] args) {
 
 
-        get("/hello", (req, res) -> {
+
+        System.out.println("Listening on: http://localhost:5467");
+        get("/", (req, res) -> {
             return Main.getRequestHandler();
         });
 
