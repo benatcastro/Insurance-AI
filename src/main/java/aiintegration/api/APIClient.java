@@ -25,7 +25,7 @@ public class APIClient {
 
     public APIClient(JsonArray data) {
 
-        Path promptFilePath = Path.of("src/main/resources/prompt.txt");
+        Path promptFilePath = Path.of("classes/prompt.txt");
 
         this.data = data;
         try {
