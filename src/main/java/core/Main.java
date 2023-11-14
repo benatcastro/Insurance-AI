@@ -1,4 +1,4 @@
-package main;
+package core;
 
 import aiintegration.api.APIClient;
 import datainput.Input;
