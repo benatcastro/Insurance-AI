@@ -7,6 +7,6 @@ services:
     container_name: AI-api
     restart: on-failure
     volumes:
-      - ./target:/app
+      - ./api/target:/app
     ports:
       - "4567:4567"
