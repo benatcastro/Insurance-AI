@@ -1,0 +1,12 @@
+
+services:
+  api:
+    image: openjdk:latest
+    working_dir: "/app"
+    command: "java -jar Insurance-Demo-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    container_name: AI-api
+    restart: on-failure
+    volumes:
+      - ./target:/app
+    ports:
+      - "4567:4567"
