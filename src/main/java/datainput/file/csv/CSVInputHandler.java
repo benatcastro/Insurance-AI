@@ -4,7 +4,6 @@ import datainput.ProcessRules;
 import datainput.file.FileInputHandler;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.management.RuntimeErrorException;
 import java.io.BufferedReader;
@@ -43,16 +42,21 @@ public class CSVInputHandler extends FileInputHandler {
     }
 
     @Override
-    protected JsonObject generateEntry() throws IOException {
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+    protected String[] extractValues() {
 
-        final String line = this.bufferedReader.readLine();
-        final String[] values = line.split(",");
+        final String line;
 
-        for (int i = 0; i < values.length; i++) {
-            jsonObjectBuilder.add(this.headers[i], values[i]);
+        try {
+            line = this.bufferedReader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        final String[] values = line.split(",");
+        return values;
+    }
 
-        return jsonObjectBuilder.build();
+    @Override
+    protected String[] extractKeys() {
+        return this.headers;
     }
 }

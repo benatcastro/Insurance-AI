@@ -4,6 +4,7 @@ import datainput.Input;
 import datainput.ProcessRules;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class FileInputHandler extends Input {
 
@@ -20,5 +21,4 @@ public abstract class FileInputHandler extends Input {
         super(rules);
         this.dataFile = new File(filename);
     }
-
 }
