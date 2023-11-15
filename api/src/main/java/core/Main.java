@@ -45,19 +45,19 @@ public class Main {
         try {
             inputCSV = new CSVInputHandler(processRules, "classes/inputs/insurance.csv");
             inputCSV.processData();
-
-
-
         } catch (IOException e) {
             System.out.println("cannot open file");
         }
 
         try {
             data = inputCSV.getDataAsJson();
-            System.out.println(data.toString());
+//            System.out.println(data.toString());
             APIClient apiClient = new APIClient(data);
             String apiResponse =  apiClient.makeApiRequest();
-            return apiResponse;
+//            System.out.println("Raw Response->" + apiResponse);
+            String responseContent = apiClient.extractResponseContent(apiResponse);
+            String formattedData = apiClient.formatResponseContent(responseContent);
+            return formattedData;
 
         }
         catch (IOException e) {
