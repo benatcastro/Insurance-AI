@@ -10,7 +10,7 @@ import static spark.Spark.*;
 
 
 public class Main {
-    private static void enableCORS(final String origin, final String methods, final String headers) {
+    private static void enableCORS(final String origin) {
 
         options("/*", (request, response) -> {
 
@@ -75,7 +75,7 @@ public class Main {
             return Main.getRequestHandler();
         });
         System.out.println("Enabling CORS...");
-        Main.enableCORS("http://localhost:5173", "hey", "hey2");
+        Main.enableCORS("http://localhost:5173");
 
 //        ProcessRules processRules = new ProcessRules();
 //        processRules.setBatchSize(5);
