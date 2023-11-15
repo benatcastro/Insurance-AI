@@ -13,7 +13,7 @@
         {id: 8, score: 17, summary: "lorem ipsum"},
         {id: 9, score: 19, summary: "lorem ipsum"},
         {id: 10, score: 23, summary: "lorem ipsum"},
-        data = "loading"
+        // data = "loading"
     ]
 
     function calculateScoreBarColor(score) {
@@ -42,11 +42,11 @@
 {:else}
     <Accordion>
         {#each data as entry}
-            <AccordionItem>
+            <AccordionItem active>
                 <div slot="header" class="accordion-header" style="width: 50%;" >
                     <h4 >Entry id: {entry.id}</h4>
                     <div style="">Score</div>
-                    <Progress value={entry.score} color="{calculateScoreBarColor(entry.score)}"/>
+                    <Progress value={entry.overall} color="{calculateScoreBarColor(entry.overall)}"></Progress>
                 </div>
                 <h6>Summary:</h6>
                 {entry.summary}

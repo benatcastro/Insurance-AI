@@ -6,11 +6,23 @@
     let startFrom = 0
     let sourceFile = "insurance.csv"
     let data;
+
+    async function getEntries() {
+        const url = new URL("http://localhost:4567");
+
+        console.log("Starting to fetch...");
+        data = "loading"
+        const response = await fetch(url);
+
+        data = await response.json()
+        console.log("response:" + data);
+    }
 </script>
 
 <main>
     <h3>Request Input configurator</h3>
     <div class="input-container">
+
         <Form>
             <FormGroup>
                 <Label for="Source">Source</Label>
@@ -55,7 +67,7 @@
             </FormGroup>
         </Form>
         <div class="buttons">
-            <Button color="primary">Get results</Button>
+            <Button color="primary" on:click={getEntries()}>Get results</Button>
             <Button color="primary">How to use</Button>
             <Button color="primary">More Info</Button>
         </div>
@@ -99,6 +111,9 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(100px, 1fr));
         grid-gap: 50px;
+    }
+    .data-container {
+        width: 80%;
     }
     @media (max-width: 900px) {
         .input-container, .buttons {
