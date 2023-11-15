@@ -1,16 +1,12 @@
 package aiintegration.api;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import javax.json.*;
 import java.io.*;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -81,35 +77,31 @@ public class APIClient {
     public String makeApiRequest() throws IOException {
 
         String apiKey = "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";
-
-        HttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(this.endpoint);
+        HttpClient client = HttpClient.newHttpClient();
 
         // Adding neccesary http headers for the request
-        httpPost.setHeader("Authorization", "Bearer " + apiKey);
-        httpPost.setHeader("Accept", "application/json");
-        httpPost.setHeader("Content-Type", "application/json");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(this.endpoint)
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(this.requestBodyBuilder()))
+                .build();
 
-        // Adding the prompt information to the request as the body
-        StringEntity body_entity;
-        String body_data = this.requestBodyBuilder();
-//        System.out.println("Body->" + body_data);
-        try {
-            body_entity = new StringEntity(body_data);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        httpPost.setEntity(body_entity);
+
+
+
+
 
         // Executing request
         try {
-            HttpResponse response = client.execute(httpPost);
-            String responseBody = EntityUtils.toString(response.getEntity());
-
-            responseBody.replaceAll("\n", " ");
-//            System.out.println("Response body- " + responseBody);
-            return responseBody;
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            System.out.println("Response body ->" + body);
+            return body;
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
