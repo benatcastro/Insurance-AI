@@ -5,6 +5,8 @@ services:
     working_dir: "/app"
     command: "java -jar Insurance-Demo-1.0-SNAPSHOT-jar-with-dependencies.jar"
     container_name: AI-api
+    env_file:
+      - api/.env
     restart: on-failure
     volumes:
       - ./api/target:/app
