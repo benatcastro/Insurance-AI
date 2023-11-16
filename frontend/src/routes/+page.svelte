@@ -34,7 +34,7 @@
         // Url + query params
         const endpoint = url + "?" + params;
 
-        console.log("starting fecth to ", endpoint);
+        console.log("starting fetch to ", endpoint);
         try {
             responseData = "loading";
             const response = await fetch(endpoint);
@@ -51,12 +51,12 @@
 <!--Introduction-->
 <div class="introduction">
     <Alert color="light" dismissible heading="Welcome to my demo!">
-        <p>This demo uses the Open AI api to analyze datasets and provide a risk istemation for insurers</p>
-        <p>Two datasets are avalaible, one with medical data about each person, the other one contains information about students and their mental health</p>
+        <p>This demo uses the Open AI api to analyze datasets and provide a risk estimation for insurers</p>
+        <p>Two datasets are available, one with medical data about each person, the other one contains information about students and their mental health</p>
         <b>How to use</b>
         <p>Choose the parameters, click "get results" and wait.</p>
         <p><b>Dataset</b>: the dataset that will be analyzed.</p>
-        <p><b>Entries</b>: how many of the entries in the dataset will be anylized.</p>
+        <p><b>Entries</b>: how many of the entries in the dataset will be analyzed.</p>
         <p><b>*NOTE*</b> if the page seems stuck reload the page and redo the request</p>
     </Alert>
 </div>
