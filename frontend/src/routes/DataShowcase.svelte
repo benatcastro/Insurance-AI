@@ -1,7 +1,11 @@
 <script>
-    import {Accordion, AccordionItem, Progress, Spinner} from "sveltestrap";
+    import {Accordion, AccordionItem, Progress } from "sveltestrap";
     export let responseData;
 
+    /**
+     * Calculates the color of the progress bar taken the score
+     * @param score
+     */
     function calculateScoreBarColor(score) {
         let n = Number(score);
 

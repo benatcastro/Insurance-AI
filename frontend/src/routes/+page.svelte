@@ -16,22 +16,22 @@
 
     const url = new URL('http://localhost:4567');
 
-    let howToUseModelOpen = false;
-
-    const toggleHowToUseModal = () => (howToUseModelOpen = !howToUseModelOpen);
-
+    /**
+     * Waits for the button click and requests the data for the backend
+     * The user params are send via query
+     */
     const fetchData = async () => {
 
         const params = new URLSearchParams();
 
-        params.set("entries", numberOfEntries);
-
+        // Adding query params to the request
+        params.set("entries", numberOfEntries.toString());
         if (sourceFile === "Medical")
             params.set("file", "medical.csv");
         else
             params.set("file", "mental-health.csv");
 
-
+        // Url + query params
         const endpoint = url + "?" + params;
 
         console.log("starting fecth to ", endpoint);
@@ -48,93 +48,79 @@
 
 </script>
 
-<main>
-    <div class="introduction">
-        <Alert color="light" dismissible heading="Welcome to my demo!">
-            <p>When you click on "get results", a request with the selected parameters will be send to the backend</p>
-            <p>The backend will parse the input file and use OpenAI api to analyze it, this may take some minutes since it is dependant on external services</p>
-            <b>How to use</b>
-            <p>Choose the parameters, click "get results" and wait.</p>
-            <p><b>Dataset</b>: the dataset that will be analyzed.</p>
-            <p><b>Entries</b>: how many of the entries in the dataset will be anylized.</p>
+<!--Introduction-->
+<div class="introduction">
+    <Alert color="light" dismissible heading="Welcome to my demo!">
+        <p>This demo uses the Open AI api to analyze datasets and provide a risk istemation for insurers</p>
+        <p>Two datasets are avalaible, one with medical data about each person, the other one contains information about students and their mental health</p>
+        <b>How to use</b>
+        <p>Choose the parameters, click "get results" and wait.</p>
+        <p><b>Dataset</b>: the dataset that will be analyzed.</p>
+        <p><b>Entries</b>: how many of the entries in the dataset will be anylized.</p>
+        <p><b>*NOTE*</b> if the page seems stuck reload the page and redo the request</p>
+    </Alert>
+</div>
 
-        </Alert>
+<!--Forms and input handler-->
+<div class="input-container">
+    <Form>
+        <FormGroup>
+            <Label for="Dataset">Dataset</Label>
+            <Input
+                    type="select"
+                    name="Some text value"
+                    bind:value={sourceFile}
+            >
+                <option>Medical</option>
+                <option>Mental Health</option>
+            </Input>
 
-    </div>
-    <div class="input-container">
-        <Form>
-            <FormGroup>
-                <Label for="Dataset">Dataset</Label>
-                <Input
-                        type="select"
-                        name="Some text value"
-                        bind:value={sourceFile}
-                >
-                    <option>Medical</option>
-                    <option>Mental Health</option>
-                </Input>
+        </FormGroup>
+    </Form>
+    <Form>
+        <FormGroup>
+            <Label for="">Entries {numberOfEntries}</Label>
+            <Input
+                    type="range"
+                    name="range"
+                    id="exampleRange"
+                    min={5}
+                    max={100}
+                    step={5}
+                    placeholder="Range placeholder"
+                    bind:value={numberOfEntries}
+            />
 
-            </FormGroup>
-        </Form>
-        <Form>
-            <FormGroup>
-                <Label for="">Entries {numberOfEntries}</Label>
-                <Input
-                        type="range"
-                        name="range"
-                        id="exampleRange"
-                        min={5}
-                        max={100}
-                        step={5}
-                        placeholder="Range placeholder"
-                        bind:value={numberOfEntries}
-                />
+        </FormGroup>
+    </Form>
+    <Button color="primary"  on:click={fetchData}>Get results</Button>
+</div>
 
-            </FormGroup>
-        </Form>
-        <Button color="primary"  on:click={fetchData}>Get results</Button>
-    </div>
-    <div class="data-container">
-        {#if (responseData == null)}
-            <div class="status-tag">
-                <h6>Waiting for request...</h6>
-            </div>
-        {:else if (responseData === "loading")}
-            <div class="status-tag">
-                <p>Loading results</p>
-                <Spinner></Spinner>
-            </div>
-        {:else if (responseData === "error")}
-            <div class="status-tag">
-                <p>Error loading results, please try again</p>
-            </div>
-        {:else}
-            <DataShowcase {responseData} ></DataShowcase>
-        {/if}
+<!--Data-->
+<div class="data-container">
+    {#if (responseData == null)}
+        <div class="status-tag">
+            <h6>Waiting for request...</h6>
+        </div>
+    {:else if (responseData === "loading")}
+        <div class="status-tag">
+            <p>Loading results</p>
+            <Spinner></Spinner>
+        </div>
+    {:else if (responseData === "error")}
+        <div class="status-tag">
+            <p>Error loading results, please try again</p>
+        </div>
+    {:else}
+        <DataShowcase {responseData} ></DataShowcase>
+    {/if}
+</div>
 
-    </div>
 
-    <h6 style="text-align: center">Made by Beñat Castro</h6>
-
-</main>
 <style>
-
-    main {
-        margin-top: 2rem;
-        gap: 0.5rem;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        height: 90vh;
-        width: 100vw;
-    }
-    h3 {
-        margin-bottom: 2rem;
-    }
     .introduction {
         width: 80%;
     }
-
 
     .input-container {
         justify-content: center;
@@ -142,11 +128,12 @@
         width: 80%;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
         display: grid;
         grid-template-columns: repeat(3, minmax(100px, 1fr));
         grid-gap: 50px;
     }
+
     .data-container {
         width: 80%;
     }
@@ -161,6 +148,5 @@
         .input-container {
             grid-template-columns: 1fr;
         }
-
     }
 </style>
