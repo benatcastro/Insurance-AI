@@ -31,31 +31,30 @@ public abstract class Input {
         this.jsonArrayBuilder = Json.createArrayBuilder();
     }
 
-    // Method were the input data is processed into a Json data structure that the AI is capable of understanding
-
     /**
-     * Getter for the data as Json
-     * @return Array of JSONs
+     * Getter for the formatted data
+     * @return JsonArray object filled with the data
      */
    public JsonArray getDataAsJson() {
         return this.jsonArrayBuilder.build();
    }
 
     /**
-     * Returns the the keys for each value found in the document
-     * Since this class doesn't handle specific type of formats, like CSV, XML...
-     * and every format have their own way to store the keys the responsability
-     * lies in the specific format handler
+     * Gets an array of keys for an entry of the input
      * @return array of Strings with all the keys
-     * @todo refactor to PairList
      */
     abstract protected String[] extractKeys();
-    abstract protected String[] extractValues();
-    /**
-     * Gets data from the concrete class, applies rules and creates the entry with Json format
-     * -> "age":"19","sex":"female","bmi":"27.9"...
-     */
 
+    /**
+     * Gets an array of values for an entry of the input
+     * @return array of Strings with all the keys
+     */
+    abstract protected String[] extractValues();
+
+    /**
+     * Generates a Json for an entry of the input
+     * @return a JSON object with the entry
+     */
     protected JsonObject generateEntry() {
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
@@ -75,14 +74,16 @@ public abstract class Input {
             jsonObjectBuilder.add(keys[i], values[i]);
         }
         return jsonObjectBuilder.build();
-    };
+    }
 
+    /**
+     * Handler and initializer of the input getting logic
+     * @throws IOException in case of read failure
+     */
     public void processData() throws IOException {
         for (int i = 0; i < this.rules.getBatchSize(); i++) {
             JsonObject jsonEntry = this.generateEntry();
             this.jsonArrayBuilder.add(jsonEntry);
         }
     }
-
-
 }

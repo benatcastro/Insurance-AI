@@ -34,7 +34,10 @@ public class ProcessRules {
     }
 
 
-
+    /**
+     * This functions adds logic to ignore certain values of a dataset.
+     * @param keyToIgnore key to be ignored
+     */
     public void ignoreKey(String keyToIgnore) {
         if (!this.ignoredKeys.contains(keyToIgnore))
             this.ignoredKeys.add(keyToIgnore);
