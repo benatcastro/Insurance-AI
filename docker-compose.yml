@@ -1,14 +1,26 @@
 
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    user: node
+    environment:
+      - NODE_ENV=production
+      - TZ=GMT
+    ports:
+      - 3000:3000
+
   api:
     image: openjdk:latest
+    container_name: AI-api
     working_dir: "/app"
     command: "java -jar Insurance-Demo-1.0-SNAPSHOT-jar-with-dependencies.jar"
-    container_name: AI-api
     env_file:
       - api/.env
     restart: on-failure
     volumes:
       - ./api/target:/app
     ports:
-      - "4567:4567"
+      - 4567:4567
