@@ -1,13 +1,14 @@
-FROM node:18-alpine
+FROM node:21-alpine as DEV
 LABEL authors="becastro"
 
-WORKDIR /app
+WORKDIR /home/app
 
-COPY . ./
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --force
-RUN npm run build
+COPY  ./package.json .
+RUN npm install
 
 USER node:node
-CMD ["node","build/index.js"]
+CMD npm run dev || tail -f
+
+FROM node:21-alpine as BUILD
+COPY --from=DEV /app/build ./bui
+CMD ["node", "./index.js"]
